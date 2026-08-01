@@ -1,0 +1,378 @@
+/* The Great Descent — narrative visualization
+   Palette (fixed by spec):
+     background #f7f7f5 · text/world #1c1e21 · faint lines #c9cccd
+     waterline #8a3b2e · secondary text #6b7075                            */
+
+:root {
+  --bg:        #f7f7f5;
+  --ink:       #1c1e21;
+  --faint:     #c9cccd;
+  --water:     #8a3b2e;
+  --muted:     #6b7075;
+  --pin:       #2c5d9e;   /* South-Korea blue, reused for pinned lines */
+  --rule:      #dcdcd8;
+  --serif:     Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
+  --sans:      system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 26px 16px 40px;
+}
+
+/* ---------- masthead ---------- */
+
+.kicker {
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 0 0 14px;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 46px;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+/* ---------- scene heading (crossfades between scenes) ---------- */
+
+/* tall enough for the longest subtitle at every width, so the chart never
+   shifts vertically when the scene text changes length */
+.scene-head {
+  min-height: 88px;
+  margin-bottom: 6px;
+  transition: opacity 260ms ease;
+}
+.scene-head.fading { opacity: 0; }
+
+/* system font: SPEC reserves the serif for the big title alone */
+.scene-heading {
+  margin: 0 0 3px;
+  font-weight: 650;
+  font-size: 20px;
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+}
+
+.scene-subtitle {
+  margin: 0;
+  max-width: 74ch;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* ---------- chart ---------- */
+
+.chart-wrap {
+  position: relative;
+  margin: 2px 0 4px;
+}
+
+#chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  /* scenes 1–5: the mouse must do nothing on the chart */
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#chart.interactive { cursor: crosshair; }
+
+/* structural chart styles */
+.grid .domain { display: none; }
+.grid line { stroke: #e3e3df; stroke-width: 1; shape-rendering: crispEdges; }
+.grid text { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
+
+.x-axis .domain { stroke: #cfd0cc; }
+.x-axis line { stroke: #cfd0cc; }
+.x-axis text { fill: var(--muted); font-size: 10.5px; font-family: var(--sans); }
+
+.axis-caption { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
+
+.waterline { stroke: var(--water); stroke-width: 1.3; stroke-dasharray: 6 4; }
+.waterline-tint { fill: var(--water); }
+.waterline-label {
+  fill: var(--water);
+  font-size: 10.5px;
+  font-family: var(--sans);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.zoom-badge {
+  fill: var(--water);
+  font-size: 10.5px;
+  font-family: var(--sans);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.line-label {
+  font-size: 11px;
+  font-family: var(--sans);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 2.6px;
+  stroke-linejoin: round;
+}
+
+/* notes never take the mouse, in any scene */
+.notes, .notes * { pointer-events: none; }
+
+/* note text carries a page-coloured halo so it stays readable where it
+   crosses the gray tangle */
+.notes text {
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3.2px;
+  stroke-linejoin: round;
+}
+
+/* d3-svg-annotation look (and the hand-drawn fallback matches it) */
+.notes .annotation-note-title,
+.notes .note-title {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--ink);
+}
+.notes .annotation-note-label,
+.notes .note-label {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-weight: 400;
+  fill: var(--muted);
+}
+.notes .annotation-connector path,
+.notes .annotation-note-line path,
+.notes .annotation path.connector,
+.notes .note-connector,
+.notes .note-rule {
+  stroke: #9aa0a4;
+  stroke-width: 0.9;
+  fill: none;
+}
+.notes .annotation-subject { display: none; }
+.notes circle.note-dot { fill: #9aa0a4; }
+
+/* ---------- tooltip (scene 6 only) ---------- */
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: rgba(28, 30, 33, 0.94);
+  color: #f4f4f2;
+  font-size: 11.5px;
+  line-height: 1.25;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 110ms ease;
+}
+.tooltip.on { opacity: 1; }
+
+/* ---------- scene 6 explore panel ---------- */
+
+.explore {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 520ms ease, opacity 360ms ease, margin 520ms ease;
+}
+.explore.on {
+  max-height: 300px;
+  opacity: 1;
+  pointer-events: auto;
+  margin: 10px 0 4px;
+}
+
+.explore-box {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--water);
+  background: #fbfbf9;
+  padding: 10px 13px;
+  border-radius: 3px;
+}
+
+.explore-lead {
+  margin: 0 0 5px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.explore-how {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.reset-btn {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 9px;
+  margin-left: 2px;
+  border: 1px solid #c2c4c0;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+.reset-btn:hover { background: #f0f0ec; }
+
+.explore-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.search {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 9px;
+  width: 210px;
+  border: 1px solid #c2c4c0;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+}
+.search:focus { outline: 2px solid #bcd0ea; outline-offset: -1px; }
+
+.region-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.region-btn {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid #c9cbc7;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.region-btn:hover { background: #f0f0ec; }
+.region-btn .swatch {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+  background: var(--muted);
+}
+.region-btn.off {
+  color: #a8abae;
+  border-color: #e0e1de;
+  background: #f4f4f1;
+  text-decoration: line-through;
+}
+.region-btn.off .swatch { background: #d2d4d0; }
+
+/* ---------- navigation ---------- */
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 14px;
+  padding-top: 11px;
+  border-top: 1px solid var(--rule);
+}
+
+.nav-btn {
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 5px 14px;
+  border: 1px solid #b9bbb7;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  min-width: 92px;
+}
+.nav-btn:hover:not(:disabled) { background: #f0f0ec; }
+.nav-btn:disabled {
+  color: #b4b7b9;
+  border-color: #e0e1de;
+  background: #f5f5f2;
+  cursor: default;
+}
+
+.counter {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 38px;
+  text-align: center;
+}
+
+.dots { display: inline-flex; gap: 6px; }
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d3d5d1;
+  transition: background 220ms ease, transform 220ms ease;
+}
+.dot.on { background: var(--ink); transform: scale(1.18); }
+
+.nav-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+/* ---------- footer ---------- */
+
+.footnote {
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 96ch;
+  border-top: 1px solid var(--rule);
+  padding-top: 10px;
+}
+
+@media (max-width: 640px) {
+  .title { font-size: 34px; }
+  .nav { flex-wrap: wrap; }
+  .nav-hint { margin-left: 0; width: 100%; }
+}

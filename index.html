@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Great Descent</title>
+<meta name="description" content="A narrative visualization of the worldwide fall in the total fertility rate, 1960–2024.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<main class="page">
+
+  <p class="kicker">A NARRATIVE VISUALIZATION · WORLD BANK WDI 1960–2024</p>
+  <h1 class="title">The Great Descent</h1>
+
+  <header class="scene-head">
+    <h2 class="scene-heading" id="scene-heading">1960: a world of big families</h2>
+    <p class="scene-subtitle" id="scene-subtitle">Almost every country clusters between four and eight births per woman.</p>
+  </header>
+
+  <div class="chart-wrap" id="chart-wrap">
+    <svg id="chart" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid meet" role="img"
+         aria-label="Line chart of the total fertility rate for every country from 1960 to 2024."></svg>
+    <div class="tooltip" id="tooltip" aria-hidden="true"></div>
+  </div>
+
+  <section class="explore" id="explore" aria-hidden="true">
+    <div class="explore-box">
+      <p class="explore-lead">
+        <strong>The authored story ends here — now test it yourself.</strong>
+        Try: which countries crossed below 2.1 most recently? Where has fertility fallen least?
+      </p>
+      <p class="explore-how">
+        Hover any line to identify it · click or search to pin a country · toggle regions ·
+        <button type="button" class="reset-btn" id="reset">Reset</button>
+      </p>
+    </div>
+    <div class="explore-controls">
+      <input type="search" class="search" id="search" list="country-list" autocomplete="off"
+             placeholder="Find a country…" aria-label="Find a country">
+      <datalist id="country-list"></datalist>
+      <div class="region-buttons" id="region-buttons"></div>
+    </div>
+  </section>
+
+  <nav class="nav" aria-label="Scene navigation">
+    <button type="button" class="nav-btn" id="back" disabled>← Back</button>
+    <span class="counter" id="counter">1 / 6</span>
+    <span class="dots" id="dots" aria-hidden="true"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+    <button type="button" class="nav-btn" id="next">Next →</button>
+    <span class="nav-hint">or use ← / → keys</span>
+  </nav>
+
+  <footer class="footnote">
+    Data: World Bank, World Development Indicators — Fertility rate, total (births per woman),
+    code SP.DYN.TFRT.IN, CC BY-4.0, July 2026 release, downloaded 2026-07-31, years 1960–2024.
+    Notes: 2.1 is the approximate replacement level only where child mortality is low — the true
+    global level is nearer 2.2–2.3. The fertility rate is a yearly snapshot: when people delay
+    having children, it temporarily reads lower than the families they end up having. China's
+    recent figures are debated.
+  </footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-svg-annotation@2.5.1/d3-annotation.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
