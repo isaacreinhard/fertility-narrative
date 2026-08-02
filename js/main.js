@@ -1,6 +1,6 @@
-/* The Great Descent — a six-scene narrative visualization of the world's
-   total fertility rate, 1960–2024.  Martini-glass structure: five authored
-   scenes in which the mouse does nothing at all, then free exploration.
+/* Fertility rates, 1960 to 2024 — a six-scene narrative visualization.
+   Martini-glass structure: five authored scenes in which the mouse does
+   nothing at all, then free exploration.
 
    Everything is drawn once and restyled between scenes; nothing is ever
    cleared and rebuilt.  Scene 4's y-axis zoom is a vertical transform on the
@@ -11,22 +11,24 @@
 
   /* ---------------------------------------------------------------- setup */
 
-  // Pigments rather than screen colours, all dark enough to read against the
-  // warm green paper. Must stay in step with the custom properties in style.css.
+  // Eight saturated hues spread around the wheel so no two featured lines ever
+  // sit next to each other, read against a dark panel. The 2.1 line stays a
+  // neutral light dash so it reads as a reference, not a ninth country.
+  // Must stay in step with the custom properties in css/style.css.
   var COL = {
-    bg:    '#e7ead5',   // warm green paper
-    ink:   '#453521',   // warm brown (world line)
-    faint: '#adb08f',   // the country tangle
-    water: '#9a4226',   // the 2.1 line
-    muted: '#6d5b41',
-    CHN:   '#a8452a',   // rust
-    IRN:   '#1f6459',   // deep teal
-    BGD:   '#a3761a',   // ochre
-    KOR:   '#375c8a',   // denim
-    JPN:   '#7f5570',   // mauve
-    ITA:   '#4f6134',   // dark olive
-    NER:   '#b05a1c',   // burnt orange
-    SSF:   '#6a3950'    // plum
+    bg:    '#141b2d',   // chart panel (note/label halos)
+    ink:   '#ffffff',   // world line
+    faint: '#4a5878',   // the country tangle
+    water: '#b9c8e4',   // the 2.1 line
+    muted: '#8b9ab5',
+    CHN:   '#ff6b57',   // coral
+    NER:   '#fb923c',   // orange
+    BGD:   '#fbbf24',   // amber
+    ITA:   '#a3e635',   // lime
+    IRN:   '#2dd4bf',   // turquoise
+    KOR:   '#60a5fa',   // blue
+    JPN:   '#c084fc',   // violet
+    SSF:   '#f472b6'    // pink
   };
 
   var VB = { w: 960, h: 540 };
@@ -129,7 +131,7 @@
       .text('y-axis zoomed to 0 to 3.2 for this scene');
   gOverlay.append('text').attr('class', 'axis-caption')
       .attr('x', 0).attr('y', 15)
-      .text('births per woman');
+      .text('fertility rate');
   var gLabels = gOverlay.append('g');
 
   var gNotes = svg.append('g').attr('class', 'notes').style('opacity', 0);
@@ -266,7 +268,7 @@
         .attr('vector-effect', 'non-scaling-stroke')
         .attr('stroke', COL.faint)
         .attr('stroke-width', 1)
-        .attr('opacity', 0.34);
+        .attr('opacity', 0.4);
     });
   }
 
@@ -309,7 +311,7 @@
       },
       {
         heading: 'China, Iran and Bangladesh fell at very different speeds',
-        subtitle: 'All three ended up near two children per woman. How they got there ' +
+        subtitle: 'All three ended up in roughly the same place. How they got there ' +
                   'looks nothing alike.',
         featured: [
           { code: 'CHN', color: COL.CHN },
@@ -335,7 +337,7 @@
         ]
       },
       {
-        heading: 'South Korea kept falling, well past one child per woman',
+        heading: 'South Korea kept falling, well below 1.0',
         subtitle: 'The y-axis is zoomed in here so the bottom of the chart is easier to ' +
                   'read. The 2.1 line has not moved.',
         featured: [
@@ -419,7 +421,7 @@
     if (s.code === 'WLD') return { stroke: COL.ink, width: 2.6, opacity: scene.world };
     if (f) return { stroke: f.color, width: s.isAggregate ? 2.5 : 2.2, opacity: 1 };
     if (s.isAggregate) return { stroke: COL.SSF, width: 2.5, opacity: 0 };
-    return { stroke: COL.faint, width: 1, opacity: 0.34 };
+    return { stroke: COL.faint, width: 1, opacity: 0.4 };
   }
 
   // Scene 6 only: exploration modifiers layered on top of the base style.
@@ -515,7 +517,7 @@
 
     // 2 · waterline
     fade(waterLine, scene.water ? 1 : 0, dur);
-    fade(tintRect, scene.water ? 0.055 : 0, dur);
+    fade(tintRect, scene.water ? 0.09 : 0, dur);
     fade(waterLabel, scene.water ? 1 : 0, dur);
 
     // 3 · vertical zoom
