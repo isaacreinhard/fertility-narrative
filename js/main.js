@@ -11,22 +11,22 @@
 
   /* ---------------------------------------------------------------- setup */
 
-  // Earth palette: pigments rather than screen colours. Must stay in step with
-  // the custom properties in css/style.css.
+  // Pigments rather than screen colours, all dark enough to read against the
+  // warm green paper. Must stay in step with the custom properties in style.css.
   var COL = {
-    bg:    '#f4ece0',   // parchment
-    ink:   '#3a2f26',   // warm dark brown (world line)
-    faint: '#c2b3a0',   // the country tangle
-    water: '#9c4a34',   // clay
-    muted: '#7d6d5d',
-    CHN:   '#b5502f',   // rust
-    IRN:   '#357a6b',   // pine
-    BGD:   '#b4841f',   // ochre
-    KOR:   '#3f6491',   // faded denim
-    JPN:   '#8d6280',   // mauve
-    ITA:   '#61784f',   // olive
-    NER:   '#c06a26',   // burnt orange
-    SSF:   '#7a4560'    // plum
+    bg:    '#e7ead5',   // warm green paper
+    ink:   '#453521',   // warm brown (world line)
+    faint: '#adb08f',   // the country tangle
+    water: '#9a4226',   // the 2.1 line
+    muted: '#6d5b41',
+    CHN:   '#a8452a',   // rust
+    IRN:   '#1f6459',   // deep teal
+    BGD:   '#a3761a',   // ochre
+    KOR:   '#375c8a',   // denim
+    JPN:   '#7f5570',   // mauve
+    ITA:   '#4f6134',   // dark olive
+    NER:   '#b05a1c',   // burnt orange
+    SSF:   '#6a3950'    // plum
   };
 
   var VB = { w: 960, h: 540 };
@@ -121,12 +121,12 @@
       .attr('x', PLOT.right + 7)
       .attr('y', y(REPLACEMENT) + 3.5)
       .attr('opacity', 0)
-      .text('replacement ≈2.1');
+      .text('replacement level (2.1)');
   var zoomBadge = gOverlay.append('text').attr('class', 'zoom-badge')
       .attr('x', PLOT.left + 8)
       .attr('y', PLOT.top + 15)
       .attr('opacity', 0)
-      .text('y-axis zoomed · 0–3.2 births per woman');
+      .text('y-axis zoomed to 0 to 3.2 for this scene');
   gOverlay.append('text').attr('class', 'axis-caption')
       .attr('x', 0).attr('y', 15)
       .text('births per woman');
@@ -283,8 +283,9 @@
   function defineScenes() {
     return [
       {
-        heading: 'It started with big families',
-        subtitle: 'Almost everywhere you looked in 1960, four or more children was ordinary.',
+        heading: 'In 1960, most women had four or more children',
+        subtitle: 'Each faint line is one country. In 1960 almost all of them sat high ' +
+                  'on the chart.',
         featured: [], world: 1, water: false, zoom: false,
         notes: [
           { code: 'WLD', year: 1960, dx: 118, dy: -60, align: 'left', wrap: 200,
@@ -293,23 +294,23 @@
         ]
       },
       {
-        heading: 'Then it fell, nearly everywhere',
-        subtitle: 'Sixty years on the average woman has fewer than half as many children. ' +
-                  'Family size has never moved this far this fast.',
+        heading: 'By 2024 the world average had fallen by half',
+        subtitle: 'The dashed line at 2.1 is roughly the level a population needs to stay ' +
+                  'the same size.',
         featured: [], world: 1, water: true, zoom: false,
         notes: [
           { code: 'WLD', year: 2024, dx: -150, dy: -96, align: 'right', wrap: 176,
-            title: v1('WLD', 2024) + ' in 2024',
-            text: 'The world now sits barely above the line where a population holds steady.' },
+            title: 'World average: ' + v1('WLD', 2024),
+            text: 'Down from ' + v1('WLD', 1960) + ' in 1960.' },
           { value: REPLACEMENT, year: 1974, dx: 16, dy: 42, align: 'left', wrap: 236,
-            title: 'The 2.1 line',
-            text: 'Below this, each generation comes out smaller than the one before it.' }
+            title: 'Replacement level: 2.1',
+            text: 'Below this line, each generation is smaller than the one before it.' }
         ]
       },
       {
-        heading: 'Everyone got there differently',
-        subtitle: 'China, Iran and Bangladesh all ended up near two. Almost nothing else ' +
-                  'about how they got there was alike.',
+        heading: 'China, Iran and Bangladesh fell at very different speeds',
+        subtitle: 'All three ended up near two children per woman. How they got there ' +
+                  'looks nothing alike.',
         featured: [
           { code: 'CHN', color: COL.CHN },
           { code: 'IRN', color: COL.IRN },
@@ -318,27 +319,25 @@
         world: 0.5, water: true, zoom: false,
         notes: [
           { code: 'CHN', year: 1963, dx: 86, dy: -28, align: 'left', wrap: 186,
-            title: "China's spike",
-            text: 'Births collapsed through the famine years, then rebounded to ' +
-                  v1('CHN', 1963) + ' in 1963.' },
+            title: 'China: ' + v1('CHN', 1963) + ' in 1963',
+            text: 'Births dropped sharply during the famine, then jumped back up again.' },
           { code: 'CHN', year: 1979, dx: -64, dy: 74, align: 'left', wrap: 190,
-            title: 'Before the policy',
-            text: "China's steepest fall came in the 1970s, years before the one-child " +
-                  'policy arrived in 1980.' },
+            title: 'The 1970s',
+            text: "China's fastest decline happened before the one-child policy started " +
+                  'in 1980.' },
           { code: 'IRN', year: 1988, dx: 66, dy: -74, align: 'left', wrap: 194,
-            title: 'Iran, in fifteen years',
-            text: 'From ' + v1('IRN', 1985) + ' in 1985 down to ' + v1('IRN', 2000) +
-                  ' by 2000. Hardly anywhere has moved that fast.' },
+            title: 'Iran: ' + v1('IRN', 1985) + ' to ' + v1('IRN', 2000),
+            text: 'Iran fell from ' + v1('IRN', 1985) + ' in 1985 to ' + v1('IRN', 2000) +
+                  ' in 2000, one of the fastest declines in the data.' },
           { code: 'BGD', year: 2000, dx: 52, dy: 96, align: 'left', wrap: 190,
-            title: 'Bangladesh, slowly',
-            text: v1('BGD', 1971) + ' in 1971, ' + v1('BGD', 2024) +
-                  ' today. No sharp turns, just decades of steady decline.' }
+            title: 'Bangladesh: ' + v1('BGD', 1971) + ' to ' + v1('BGD', 2024),
+            text: 'A slow, steady decline over about fifty years.' }
         ]
       },
       {
-        heading: 'Through the floor',
-        subtitle: 'South Korea kept going past every level anyone thought was the bottom. ' +
-                  "The vertical axis is zoomed in here; the 2.1 line hasn't moved.",
+        heading: 'South Korea kept falling, well past one child per woman',
+        subtitle: 'The y-axis is zoomed in here so the bottom of the chart is easier to ' +
+                  'read. The 2.1 line has not moved.',
         featured: [
           { code: 'JPN', color: COL.JPN },
           { code: 'ITA', color: COL.ITA },
@@ -348,21 +347,21 @@
         world: 0.5, water: true, zoom: true,
         notes: [
           { code: 'KOR', year: 1983, dx: -160, dy: 108, align: 'left', wrap: 188,
-            title: 'Below replacement in 1983',
-            text: 'Korea slipped under 2.1 that year and has never been back above it since.' },
+            title: 'Below 2.1 in 1983',
+            text: 'Korea has stayed under that line every year since.' },
           { code: 'KOR', year: 2018, dx: -164, dy: -70, align: 'right', wrap: 182,
-            title: 'Under one child',
-            text: 'Only Hong Kong and Macao, both city territories, had ever been here before.' },
+            title: 'Below 1.0 in 2018',
+            text: 'Only Hong Kong and Macao, both city territories, had been this low before.' },
           { code: 'KOR', year: 2024, dx: -128, dy: 40, align: 'right', wrap: 188,
-            title: v2('KOR', 2023) + ' → ' + v2('KOR', 2024),
-            text: "2023 was Korea's lowest year on record. Then 2024 ticked up, the first " +
-                  'rise in nine years.' }
+            title: v2('KOR', 2023) + ' in 2023, ' + v2('KOR', 2024) + ' in 2024',
+            text: "2023 was Korea's lowest year on record. 2024 was the first increase in " +
+                  'nine years.' }
         ]
       },
       {
-        heading: 'One region is still turning',
-        subtitle: 'Sub-Saharan Africa began falling later, and from higher up. Most of the ' +
-                  'population growth left this century is expected to happen here.',
+        heading: 'Sub-Saharan Africa started falling later',
+        subtitle: 'It is still the highest region on the chart, and most of the world ' +
+                  "population growth left this century is expected to happen there.",
         featured: [
           { code: 'SSF', color: COL.SSF },
           { code: 'NER', color: COL.NER }
@@ -371,18 +370,16 @@
         notes: [
           { code: 'NER', year: 2024, dx: -206, dy: -52, align: 'right', wrap: 190,
             title: 'Niger: ' + v1('NER', 2024),
-            text: 'Highest in the world every year from 1995 to 2018. Four countries have ' +
-                  'since passed it.' },
+            text: 'Niger was the highest country in the world every year from 1995 to 2018.' },
           { code: 'SSF', year: 2024, dx: -196, dy: 40, align: 'right', wrap: 196,
             title: 'Sub-Saharan Africa: ' + v1('SSF', 2024),
-            text: 'Falling as well, just later and from much further up.' }
+            text: 'Falling, but it started later and from a higher point than anywhere else.' }
         ]
       },
       {
-        heading: 'Now go and look for yourself',
-        subtitle: 'A world that averaged nearly five children per woman now averages just ' +
-                  'over two. Korea sits far below that, Sub-Saharan Africa well above. ' +
-                  'Every country has its own version of this story.',
+        heading: 'Explore the data yourself',
+        subtitle: 'Hover over any line to see which country it is, or type a country ' +
+                  'name below.',
         featured: [ { code: 'SSF', color: COL.SSF } ],
         world: 1, water: true, zoom: false, explore: true,
         notes: []
@@ -867,7 +864,7 @@
     var r = el.wrap.getBoundingClientRect();
     var left = ev.clientX - r.left + 14;
     var top = ev.clientY - r.top + 14;
-    el.tooltip.textContent = n.series.name + ' · ' + n.year + ': ' + f2(n.value);
+    el.tooltip.textContent = n.series.name + ', ' + n.year + ': ' + f2(n.value);
     el.tooltip.classList.add('on');
     var tw = el.tooltip.offsetWidth, th = el.tooltip.offsetHeight;
     if (left + tw > r.width) left = ev.clientX - r.left - tw - 14;
