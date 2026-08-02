@@ -11,20 +11,22 @@
 
   /* ---------------------------------------------------------------- setup */
 
+  // Earth palette: pigments rather than screen colours. Must stay in step with
+  // the custom properties in css/style.css.
   var COL = {
-    bg:    '#f7f7f5',
-    ink:   '#1c1e21',
-    faint: '#c9cccd',
-    water: '#8a3b2e',
-    muted: '#6b7075',
-    CHN:   '#b0492f',
-    IRN:   '#12736b',
-    BGD:   '#b8860b',
-    KOR:   '#2c5d9e',
-    JPN:   '#8c5f86',
-    ITA:   '#5b7553',
-    NER:   '#c0651f',
-    SSF:   '#6d3a5d'
+    bg:    '#f4ece0',   // parchment
+    ink:   '#3a2f26',   // warm dark brown (world line)
+    faint: '#c2b3a0',   // the country tangle
+    water: '#9c4a34',   // clay
+    muted: '#7d6d5d',
+    CHN:   '#b5502f',   // rust
+    IRN:   '#357a6b',   // pine
+    BGD:   '#b4841f',   // ochre
+    KOR:   '#3f6491',   // faded denim
+    JPN:   '#8d6280',   // mauve
+    ITA:   '#61784f',   // olive
+    NER:   '#c06a26',   // burnt orange
+    SSF:   '#7a4560'    // plum
   };
 
   var VB = { w: 960, h: 540 };
@@ -244,7 +246,11 @@
 
     series.sort(function (a, b) { return d3.ascending(a.name, b.name); });
 
+    // Monotone cubic: softens the joins between years without inventing peaks
+    // or troughs — it passes through every point and never overshoots, so
+    // China's 1963 spike stays exactly as sharp as the data says it is.
     var line = d3.line()
+      .curve(d3.curveMonotoneX)
       .defined(function (p) { return p.tfr !== null; })
       .x(function (p) { return x(p.year); })
       .y(function (p) { return y(p.tfr); });
@@ -277,34 +283,33 @@
   function defineScenes() {
     return [
       {
-        heading: '1960: big families were the norm',
-        subtitle: 'Most countries sat somewhere between four and eight births per woman.',
+        heading: 'It started with big families',
+        subtitle: 'Almost everywhere you looked in 1960, four or more children was ordinary.',
         featured: [], world: 1, water: false, zoom: false,
         notes: [
           { code: 'WLD', year: 1960, dx: 118, dy: -60, align: 'left', wrap: 200,
             title: 'World average: ' + v1('WLD', 1960),
-            text: 'Only 37 countries were under three, and all but two of those were in Europe.' }
+            text: 'Only 37 countries were below three, and all but two of them were in Europe.' }
         ]
       },
       {
-        heading: 'Sixty years later',
-        subtitle: 'The world average has fallen to about half what it was. Family size has ' +
-                  'never changed this much this quickly.',
+        heading: 'Then it fell, nearly everywhere',
+        subtitle: 'Sixty years on the average woman has fewer than half as many children. ' +
+                  'Family size has never moved this far this fast.',
         featured: [], world: 1, water: true, zoom: false,
         notes: [
           { code: 'WLD', year: 2024, dx: -150, dy: -96, align: 'right', wrap: 176,
             title: v1('WLD', 2024) + ' in 2024',
-            text: 'The world is now barely above replacement level.' },
+            text: 'The world now sits barely above the line where a population holds steady.' },
           { value: REPLACEMENT, year: 1974, dx: 16, dy: 42, align: 'left', wrap: 236,
             title: 'The 2.1 line',
-            text: 'Roughly the rate a population needs to hold steady. Below it, each ' +
-                  'generation comes out smaller than the one before.' }
+            text: 'Below this, each generation comes out smaller than the one before it.' }
         ]
       },
       {
-        heading: 'Same destination, different routes',
-        subtitle: 'China, Iran and Bangladesh all ended up near two, but they got there in ' +
-                  'very different ways.',
+        heading: 'Everyone got there differently',
+        subtitle: 'China, Iran and Bangladesh all ended up near two. Almost nothing else ' +
+                  'about how they got there was alike.',
         featured: [
           { code: 'CHN', color: COL.CHN },
           { code: 'IRN', color: COL.IRN },
@@ -314,25 +319,26 @@
         notes: [
           { code: 'CHN', year: 1963, dx: 86, dy: -28, align: 'left', wrap: 186,
             title: "China's spike",
-            text: 'Births collapsed during the famine, then bounced back to ' +
+            text: 'Births collapsed through the famine years, then rebounded to ' +
                   v1('CHN', 1963) + ' in 1963.' },
-          { code: 'CHN', year: 1979, dx: -64, dy: 92, align: 'left', wrap: 190,
-            title: 'Most of it came early',
-            text: 'China fell fastest in the 1970s, before the one-child policy began in 1980.' },
+          { code: 'CHN', year: 1979, dx: -64, dy: 74, align: 'left', wrap: 190,
+            title: 'Before the policy',
+            text: "China's steepest fall came in the 1970s, years before the one-child " +
+                  'policy arrived in 1980.' },
           { code: 'IRN', year: 1988, dx: 66, dy: -74, align: 'left', wrap: 194,
-            title: 'Iran, in 15 years',
-            text: 'Down from ' + v1('IRN', 1985) + ' in 1985 to ' + v1('IRN', 2000) +
-                  ' by 2000. Few countries have dropped that fast.' },
+            title: 'Iran, in fifteen years',
+            text: 'From ' + v1('IRN', 1985) + ' in 1985 down to ' + v1('IRN', 2000) +
+                  ' by 2000. Hardly anywhere has moved that fast.' },
           { code: 'BGD', year: 2000, dx: 52, dy: 96, align: 'left', wrap: 190,
-            title: 'Bangladesh, gradually',
+            title: 'Bangladesh, slowly',
             text: v1('BGD', 1971) + ' in 1971, ' + v1('BGD', 2024) +
-                  ' today. No sharp turns, just a steady slide.' }
+                  ' today. No sharp turns, just decades of steady decline.' }
         ]
       },
       {
         heading: 'Through the floor',
-        subtitle: 'South Korea kept going past every level people assumed was the bottom. ' +
-                  'The vertical axis is zoomed in here; the 2.1 line stays put.',
+        subtitle: 'South Korea kept going past every level anyone thought was the bottom. ' +
+                  "The vertical axis is zoomed in here; the 2.1 line hasn't moved.",
         featured: [
           { code: 'JPN', color: COL.JPN },
           { code: 'ITA', color: COL.ITA },
@@ -343,19 +349,20 @@
         notes: [
           { code: 'KOR', year: 1983, dx: -160, dy: 108, align: 'left', wrap: 188,
             title: 'Below replacement in 1983',
-            text: 'Korea dropped under 2.1 that year and has never been back above it.' },
+            text: 'Korea slipped under 2.1 that year and has never been back above it since.' },
           { code: 'KOR', year: 2018, dx: -164, dy: -70, align: 'right', wrap: 182,
-            title: 'Under one birth',
-            text: 'Only Hong Kong and Macao, both city territories, had got there first.' },
-          { code: 'KOR', year: 2024, dx: -128, dy: 58, align: 'right', wrap: 188,
+            title: 'Under one child',
+            text: 'Only Hong Kong and Macao, both city territories, had ever been here before.' },
+          { code: 'KOR', year: 2024, dx: -128, dy: 40, align: 'right', wrap: 188,
             title: v2('KOR', 2023) + ' → ' + v2('KOR', 2024),
-            text: '2023 was Korea’s record low. 2024 ticked up for the first time in nine years.' }
+            text: "2023 was Korea's lowest year on record. Then 2024 ticked up, the first " +
+                  'rise in nine years.' }
         ]
       },
       {
-        heading: 'The last to turn',
-        subtitle: 'Sub-Saharan Africa started falling later, and from higher up. Most of the ' +
-                  'population growth left this century is expected to come from here.',
+        heading: 'One region is still turning',
+        subtitle: 'Sub-Saharan Africa began falling later, and from higher up. Most of the ' +
+                  'population growth left this century is expected to happen here.',
         featured: [
           { code: 'SSF', color: COL.SSF },
           { code: 'NER', color: COL.NER }
@@ -364,18 +371,18 @@
         notes: [
           { code: 'NER', year: 2024, dx: -206, dy: -52, align: 'right', wrap: 190,
             title: 'Niger: ' + v1('NER', 2024),
-            text: 'Highest in the world every year from 1995 to 2018. Four countries are ' +
-                  'now just above it.' },
+            text: 'Highest in the world every year from 1995 to 2018. Four countries have ' +
+                  'since passed it.' },
           { code: 'SSF', year: 2024, dx: -196, dy: 40, align: 'right', wrap: 196,
             title: 'Sub-Saharan Africa: ' + v1('SSF', 2024),
-            text: 'Falling too, just later and from a much higher starting point.' }
+            text: 'Falling as well, just later and from much further up.' }
         ]
       },
       {
-        heading: 'Look up a country',
+        heading: 'Now go and look for yourself',
         subtitle: 'A world that averaged nearly five children per woman now averages just ' +
-                  'over two. Korea sits far below that, Sub-Saharan Africa well above it. ' +
-                  'Search for any country to follow its own path.',
+                  'over two. Korea sits far below that, Sub-Saharan Africa well above. ' +
+                  'Every country has its own version of this story.',
         featured: [ { code: 'SSF', color: COL.SSF } ],
         world: 1, water: true, zoom: false, explore: true,
         notes: []

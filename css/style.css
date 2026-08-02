@@ -1,18 +1,24 @@
-/* The Great Descent — narrative visualization
-   Palette (fixed by spec):
-     background #f7f7f5 · text/world #1c1e21 · faint lines #c9cccd
-     waterline #8a3b2e · secondary text #6b7075                            */
+/* The Great Descent
+   Warm paper palette, humanist type, soft edges.
+   Display face is Palatino Linotype (calligraphic, humanist); everything else
+   is Candara, a humanist sans with flared stems and open curves. Both ship
+   with the OS, with Optima / Iowan Old Style as the Mac equivalents, so no
+   font is ever downloaded.                                                  */
 
 :root {
-  --bg:        #f7f7f5;
-  --ink:       #1c1e21;
-  --faint:     #c9cccd;
-  --water:     #8a3b2e;
-  --muted:     #6b7075;
-  --pin:       #2c5d9e;   /* South-Korea blue, reused for pinned lines */
-  --rule:      #dcdcd8;
-  --serif:     Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
-  --sans:      system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --paper:     #f4ece0;   /* warm parchment */
+  --paper-alt: #fbf6ee;   /* raised panels */
+  --ink:       #3a2f26;   /* warm dark brown, used for the world line */
+  --faint:     #c2b3a0;   /* the country tangle */
+  --clay:      #9c4a34;   /* waterline */
+  --muted:     #7d6d5d;   /* secondary text */
+  --rule:      #ddd0bd;   /* hairlines */
+  --pin:       #3f6491;   /* South-Korea blue, reused for a pinned country */
+
+  --display: "Palatino Linotype", Palatino, "Book Antiqua", "Iowan Old Style",
+             Georgia, serif;
+  --text: Candara, Optima, "Gill Sans MT", "Trebuchet MS", "Segoe UI",
+          system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -20,62 +26,61 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--ink);
-  font-family: var(--sans);
+  font-family: var(--text);
   -webkit-font-smoothing: antialiased;
 }
 
 .page {
   max-width: 960px;
   margin: 0 auto;
-  padding: 26px 16px 40px;
+  padding: 30px 18px 44px;
 }
 
 /* ---------- masthead ---------- */
 
 .kicker {
-  margin: 0 0 6px;
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .title {
-  margin: 0 0 14px;
-  font-family: var(--serif);
+  margin: 0 0 16px;
+  font-family: var(--display);
   font-weight: 700;
-  font-size: 46px;
-  line-height: 1.05;
-  letter-spacing: -0.015em;
+  font-size: 50px;
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  color: #33281f;
 }
 
-/* ---------- scene heading (crossfades between scenes) ---------- */
+/* ---------- scene heading ---------- */
 
-/* tall enough for the longest subtitle at every width, so the chart never
-   shifts vertically when the scene text changes length */
 .scene-head {
-  min-height: 88px;
-  margin-bottom: 6px;
-  transition: opacity 260ms ease;
+  min-height: 104px;
+  margin-bottom: 8px;
+  transition: opacity 300ms ease;
 }
 .scene-head.fading { opacity: 0; }
 
-/* system font: SPEC reserves the serif for the big title alone */
 .scene-heading {
-  margin: 0 0 3px;
-  font-weight: 650;
-  font-size: 20px;
-  letter-spacing: -0.005em;
-  line-height: 1.25;
+  margin: 0 0 4px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 23px;
+  line-height: 1.22;
+  color: #3d3128;
 }
 
 .scene-subtitle {
   margin: 0;
-  max-width: 74ch;
-  font-size: 13.5px;
-  line-height: 1.45;
+  max-width: 68ch;
+  font-size: 14.5px;
+  line-height: 1.55;
   color: var(--muted);
 }
 
@@ -83,7 +88,7 @@ html, body {
 
 .chart-wrap {
   position: relative;
-  margin: 2px 0 4px;
+  margin: 4px 0 6px;
 }
 
 #chart {
@@ -91,236 +96,256 @@ html, body {
   width: 100%;
   height: auto;
   overflow: visible;
-  /* scenes 1–5: the mouse must do nothing on the chart */
-  cursor: default;
+  cursor: default;              /* scenes 1–5: the mouse does nothing */
   -webkit-user-select: none;
   user-select: none;
 }
 #chart.interactive { cursor: crosshair; }
 
-/* structural chart styles */
 .grid .domain { display: none; }
-.grid line { stroke: #e3e3df; stroke-width: 1; shape-rendering: crispEdges; }
-.grid text { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
+.grid line {
+  stroke: #e2d6c4;
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+.grid text { fill: var(--muted); font-size: 10.5px; font-family: var(--text); }
 
-.x-axis .domain { stroke: #cfd0cc; }
-.x-axis line { stroke: #cfd0cc; }
-.x-axis text { fill: var(--muted); font-size: 10.5px; font-family: var(--sans); }
+.x-axis .domain { stroke: #d5c7b3; stroke-linecap: round; }
+.x-axis line { stroke: #d5c7b3; }
+.x-axis text { fill: var(--muted); font-size: 11px; font-family: var(--text); }
 
-.axis-caption { fill: var(--muted); font-size: 10px; font-family: var(--sans); }
-
-.waterline { stroke: var(--water); stroke-width: 1.3; stroke-dasharray: 6 4; }
-.waterline-tint { fill: var(--water); }
-.waterline-label {
-  fill: var(--water);
+.axis-caption {
+  fill: var(--muted);
   font-size: 10.5px;
-  font-family: var(--sans);
+  font-family: var(--text);
+  font-style: italic;
+}
+
+.waterline {
+  stroke: var(--clay);
+  stroke-width: 1.4;
+  stroke-dasharray: 2 6;
+  stroke-linecap: round;        /* soft dotted rule rather than hard dashes */
+  opacity: 0.85;
+}
+.waterline-tint { fill: var(--clay); }
+.waterline-label {
+  fill: var(--clay);
+  font-size: 11px;
+  font-family: var(--text);
+  font-style: italic;
   paint-order: stroke;
-  stroke: var(--bg);
+  stroke: var(--paper);
   stroke-width: 3px;
   stroke-linejoin: round;
 }
 
 .zoom-badge {
-  fill: var(--water);
-  font-size: 10.5px;
-  font-family: var(--sans);
-  font-weight: 600;
+  fill: var(--clay);
+  font-size: 11px;
+  font-family: var(--text);
+  font-style: italic;
   paint-order: stroke;
-  stroke: var(--bg);
+  stroke: var(--paper);
   stroke-width: 3px;
   stroke-linejoin: round;
 }
 
 .line-label {
-  font-size: 11px;
-  font-family: var(--sans);
+  font-size: 11.5px;
+  font-family: var(--text);
   font-weight: 600;
   paint-order: stroke;
-  stroke: var(--bg);
-  stroke-width: 2.6px;
+  stroke: var(--paper);
+  stroke-width: 2.8px;
   stroke-linejoin: round;
 }
 
 /* notes never take the mouse, in any scene */
 .notes, .notes * { pointer-events: none; }
 
-/* note text carries a page-coloured halo so it stays readable where it
-   crosses the gray tangle */
-.notes text {
-  paint-order: stroke;
-  stroke: var(--bg);
-  stroke-width: 3.2px;
-  stroke-linejoin: round;
-}
-
-/* d3-svg-annotation look (and the hand-drawn fallback matches it) */
 .notes .annotation-note-title,
 .notes .note-title {
-  font-family: var(--sans);
-  font-size: 12px;
+  font-family: var(--display);
+  font-size: 13px;
   font-weight: 700;
   fill: var(--ink);
 }
 .notes .annotation-note-label,
 .notes .note-label {
-  font-family: var(--sans);
-  font-size: 10.5px;
+  font-family: var(--text);
+  font-size: 11.5px;
   font-weight: 400;
-  fill: var(--muted);
+  fill: #6f6053;
 }
 .notes .annotation-connector path,
 .notes .annotation-note-line path,
 .notes .annotation path.connector,
 .notes .note-connector,
 .notes .note-rule {
-  stroke: #9aa0a4;
-  stroke-width: 0.9;
+  stroke: #b8a793;
+  stroke-width: 1;
+  stroke-linecap: round;
   fill: none;
 }
 .notes .annotation-subject { display: none; }
-.notes circle.note-dot { fill: #9aa0a4; }
+.notes circle.note-dot { fill: #b8a793; }
 
-/* ---------- tooltip (scene 6 only) ---------- */
+/* page-coloured halo keeps note text readable over the tangle */
+.notes text {
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 3.4px;
+  stroke-linejoin: round;
+}
+
+/* ---------- tooltip ---------- */
 
 .tooltip {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 5;
-  padding: 5px 8px;
-  border-radius: 4px;
-  background: rgba(28, 30, 33, 0.94);
-  color: #f4f4f2;
-  font-size: 11.5px;
-  line-height: 1.25;
+  padding: 6px 10px;
+  border-radius: 9px;
+  background: rgba(58, 47, 38, 0.94);
+  color: #f6efe4;
+  font-size: 12px;
+  line-height: 1.3;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 110ms ease;
+  transition: opacity 120ms ease;
 }
 .tooltip.on { opacity: 1; }
 
-/* ---------- scene 6 explore panel ---------- */
+/* ---------- closing scene ---------- */
 
 .explore {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
-  transition: max-height 520ms ease, opacity 360ms ease, margin 520ms ease;
+  transition: max-height 560ms ease, opacity 380ms ease, margin 560ms ease;
 }
 .explore.on {
-  max-height: 220px;
+  max-height: 240px;
   opacity: 1;
   pointer-events: auto;
-  margin: 10px 0 4px;
+  margin: 14px 0 6px;
 }
 
 .explore-box {
   border: 1px solid var(--rule);
-  border-left: 3px solid var(--water);
-  background: #fbfbf9;
-  padding: 10px 13px;
-  border-radius: 3px;
+  background: var(--paper-alt);
+  padding: 14px 18px;
+  border-radius: 14px;
 }
 
 .explore-lead {
-  margin: 0 0 5px;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink);
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.5;
 }
+.explore-lead strong { font-family: var(--display); font-weight: 700; }
+
 .explore-how {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 12.5px;
   line-height: 1.5;
   color: var(--muted);
 }
-
-.reset-btn {
-  font-family: inherit;
-  font-size: 11px;
-  padding: 2px 9px;
-  margin-left: 2px;
-  border: 1px solid #c2c4c0;
-  border-radius: 3px;
-  background: #fff;
-  color: var(--ink);
-  cursor: pointer;
-}
-.reset-btn:hover { background: #f0f0ec; }
 
 .explore-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  margin-top: 9px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .search {
   font-family: inherit;
-  font-size: 12px;
-  padding: 5px 9px;
-  width: 210px;
-  border: 1px solid #c2c4c0;
-  border-radius: 3px;
-  background: #fff;
+  font-size: 13.5px;
+  padding: 8px 14px;
+  width: 232px;
+  border: 1px solid #cfc0ac;
+  border-radius: 999px;
+  background: var(--paper-alt);
   color: var(--ink);
 }
-.search:focus { outline: 2px solid #bcd0ea; outline-offset: -1px; }
+.search::placeholder { color: #a2907d; font-style: italic; }
+.search:focus {
+  outline: none;
+  border-color: var(--clay);
+  box-shadow: 0 0 0 3px rgba(156, 74, 52, 0.13);
+}
+
+.reset-btn {
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 7px 16px;
+  border: 1px solid #cfc0ac;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+.reset-btn:hover:not(:disabled) { background: #ebdfcd; color: var(--ink); }
 
 /* ---------- navigation ---------- */
 
 .nav {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 12px 0 14px;
-  padding-top: 11px;
+  gap: 14px;
+  margin: 16px 0 16px;
+  padding-top: 14px;
   border-top: 1px solid var(--rule);
 }
 
 .nav-btn {
   font-family: inherit;
-  font-size: 12.5px;
-  padding: 5px 14px;
-  border: 1px solid #b9bbb7;
-  border-radius: 3px;
-  background: #fff;
+  font-size: 13.5px;
+  padding: 8px 20px;
+  border: 1px solid #cfc0ac;
+  border-radius: 999px;
+  background: var(--paper-alt);
   color: var(--ink);
   cursor: pointer;
-  min-width: 92px;
+  min-width: 104px;
+  transition: background 160ms ease, border-color 160ms ease;
 }
-.nav-btn:hover:not(:disabled) { background: #f0f0ec; }
+.nav-btn:hover:not(:disabled) { background: #ebdfcd; border-color: #bfae98; }
 .nav-btn:disabled {
-  color: #b4b7b9;
-  border-color: #e0e1de;
-  background: #f5f5f2;
+  color: #b6a894;
+  border-color: #e6dbca;
+  background: transparent;
   cursor: default;
 }
 
 .counter {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  min-width: 38px;
+  min-width: 40px;
   text-align: center;
 }
 
-.dots { display: inline-flex; gap: 6px; }
+.dots { display: inline-flex; gap: 7px; }
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #d3d5d1;
-  transition: background 220ms ease, transform 220ms ease;
+  background: #d8c9b5;
+  transition: background 240ms ease, transform 240ms ease;
 }
-.dot.on { background: var(--ink); transform: scale(1.18); }
+.dot.on { background: var(--clay); transform: scale(1.2); }
 
 .nav-hint {
-  font-size: 11px;
+  font-size: 12px;
+  font-style: italic;
   color: var(--muted);
   margin-left: auto;
 }
@@ -328,21 +353,21 @@ html, body {
 /* ---------- footer ---------- */
 
 .footnote {
-  font-size: 10.5px;
-  line-height: 1.55;
+  font-size: 11.5px;
+  line-height: 1.65;
   color: var(--muted);
-  max-width: 96ch;
+  max-width: 92ch;
   border-top: 1px solid var(--rule);
-  padding-top: 10px;
+  padding-top: 12px;
 }
 
 @media (max-width: 640px) {
-  .title { font-size: 34px; }
+  .title { font-size: 36px; }
   .nav { flex-wrap: wrap; }
   .nav-hint { margin-left: 0; width: 100%; }
 }
 
-/* Narrow screens wrap the longer subtitles onto more lines; reserve the extra
-   room so the chart still holds its place when the scene changes. */
-@media (max-width: 560px) { .scene-head { min-height: 114px; } }
-@media (max-width: 340px) { .scene-head { min-height: 136px; } }
+/* Narrow screens wrap the longer subtitles onto more lines; reserve the room
+   so the chart still holds its place when the scene changes. */
+@media (max-width: 560px) { .scene-head { min-height: 126px; } }
+@media (max-width: 340px) { .scene-head { min-height: 176px; } }
