@@ -211,7 +211,7 @@ html, body {
   transition: max-height 520ms ease, opacity 360ms ease, margin 520ms ease;
 }
 .explore.on {
-  max-height: 300px;
+  max-height: 220px;
   opacity: 1;
   pointer-events: auto;
   margin: 10px 0 4px;
@@ -270,41 +270,6 @@ html, body {
   color: var(--ink);
 }
 .search:focus { outline: 2px solid #bcd0ea; outline-offset: -1px; }
-
-.region-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.region-btn {
-  font-family: inherit;
-  font-size: 11px;
-  padding: 3px 8px;
-  border: 1px solid #c9cbc7;
-  border-radius: 11px;
-  background: #fff;
-  color: var(--ink);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.region-btn:hover { background: #f0f0ec; }
-.region-btn .swatch {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  margin-right: 5px;
-  vertical-align: middle;
-  background: var(--muted);
-}
-.region-btn.off {
-  color: #a8abae;
-  border-color: #e0e1de;
-  background: #f4f4f1;
-  text-decoration: line-through;
-}
-.region-btn.off .swatch { background: #d2d4d0; }
 
 /* ---------- navigation ---------- */
 
@@ -376,3 +341,8 @@ html, body {
   .nav { flex-wrap: wrap; }
   .nav-hint { margin-left: 0; width: 100%; }
 }
+
+/* Narrow screens wrap the longer subtitles onto more lines; reserve the extra
+   room so the chart still holds its place when the scene changes. */
+@media (max-width: 560px) { .scene-head { min-height: 114px; } }
+@media (max-width: 340px) { .scene-head { min-height: 136px; } }

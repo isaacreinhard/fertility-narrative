@@ -29,19 +29,19 @@
   <section class="explore" id="explore" aria-hidden="true">
     <div class="explore-box">
       <p class="explore-lead">
-        <strong>The authored story ends here — now test it yourself.</strong>
-        Try: which countries crossed below 2.1 most recently? Where has fertility fallen least?
+        <strong>That's the end of the walkthrough. Have a look for yourself.</strong>
+        Which countries dropped below 2.1 most recently? Where has the rate barely moved?
       </p>
       <p class="explore-how">
-        Hover any line to identify it · click or search to pin a country · toggle regions ·
-        <button type="button" class="reset-btn" id="reset">Reset</button>
+        Hover a line to see which country it is, then click it to keep it highlighted.
+        Or type a name below.
       </p>
     </div>
     <div class="explore-controls">
       <input type="search" class="search" id="search" list="country-list" autocomplete="off"
-             placeholder="Find a country…" aria-label="Find a country">
+             placeholder="Find a country…" aria-label="Find a country" disabled>
       <datalist id="country-list"></datalist>
-      <div class="region-buttons" id="region-buttons"></div>
+      <button type="button" class="reset-btn" id="reset" disabled>Clear</button>
     </div>
   </section>
 
@@ -54,12 +54,12 @@
   </nav>
 
   <footer class="footnote">
-    Data: World Bank, World Development Indicators — Fertility rate, total (births per woman),
-    code SP.DYN.TFRT.IN, CC BY-4.0, July 2026 release, downloaded 2026-07-31, years 1960–2024.
-    Notes: 2.1 is the approximate replacement level only where child mortality is low — the true
-    global level is nearer 2.2–2.3. The fertility rate is a yearly snapshot: when people delay
-    having children, it temporarily reads lower than the families they end up having. China's
-    recent figures are debated.
+    Data: World Bank, World Development Indicators, "Fertility rate, total (births per woman)",
+    indicator SP.DYN.TFRT.IN, CC BY-4.0. July 2026 release, downloaded 2026-07-31, covering
+    1960 to 2024. A few caveats worth knowing: 2.1 only counts as replacement where child
+    mortality is low, and the real global figure is closer to 2.2 or 2.3. The rate is a snapshot
+    of one year, so when people put off having children it reads lower than the families those
+    people actually end up with. China's recent numbers are disputed.
   </footer>
 
 </main>

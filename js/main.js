@@ -173,7 +173,6 @@
     explore:  document.getElementById('explore'),
     search:   document.getElementById('search'),
     datalist: document.getElementById('country-list'),
-    regions:  document.getElementById('region-buttons'),
     reset:    document.getElementById('reset'),
     tooltip:  document.getElementById('tooltip'),
     wrap:     document.getElementById('chart-wrap')
@@ -197,13 +196,13 @@
 
   /* ------------------------------------------------------------ the story */
 
-  var series = [], byCode = {}, regions = [];
+  var series = [], byCode = {};
   var scenes = [];
   var current = 0, sceneToken = 0, noteTimer = null, armTimer = null;
   var front = {};                                   // code -> in gFeatured
 
   // scene-6 exploration state (never allowed to touch scenes 1–5)
-  var pinned = null, hovered = null, hiddenRegions = {};
+  var pinned = null, hovered = null;
 
   function start(rows) {
     build(rows);
@@ -245,9 +244,6 @@
 
     series.sort(function (a, b) { return d3.ascending(a.name, b.name); });
 
-    regions = Array.from(new Set(series.filter(function (s) { return !s.isAggregate; })
-                                       .map(function (s) { return s.region; }))).sort();
-
     var line = d3.line()
       .defined(function (p) { return p.tfr !== null; })
       .x(function (p) { return x(p.year); })
@@ -281,34 +277,34 @@
   function defineScenes() {
     return [
       {
-        heading: '1960: a world of big families',
-        subtitle: 'Almost every country clusters between four and eight births per woman.',
+        heading: '1960: big families were the norm',
+        subtitle: 'Most countries sat somewhere between four and eight births per woman.',
         featured: [], world: 1, water: false, zoom: false,
         notes: [
           { code: 'WLD', year: 1960, dx: 118, dy: -60, align: 'left', wrap: 200,
-            title: 'The world average: ' + v1('WLD', 1960),
-            text: 'In 1960 hardly any country sits below three births per woman.' }
+            title: 'World average: ' + v1('WLD', 1960),
+            text: 'Only 37 countries were under three, and all but two of those were in Europe.' }
         ]
       },
       {
-        heading: 'The great descent',
-        subtitle: 'Six decades later the world average sits near replacement — the largest, ' +
-                  'fastest change in reproductive behavior ever recorded.',
+        heading: 'Sixty years later',
+        subtitle: 'The world average has fallen to about half what it was. Family size has ' +
+                  'never changed this much this quickly.',
         featured: [], world: 1, water: true, zoom: false,
         notes: [
           { code: 'WLD', year: 2024, dx: -150, dy: -96, align: 'right', wrap: 176,
             title: v1('WLD', 2024) + ' in 2024',
-            text: 'The world average now sits just above replacement.' },
+            text: 'The world is now barely above replacement level.' },
           { value: REPLACEMENT, year: 1974, dx: 16, dy: 42, align: 'left', wrap: 236,
-            title: 'The waterline: 2.1',
-            text: 'Approximate replacement where child mortality is low — below it, each ' +
-                  'generation is smaller than the last.' }
+            title: 'The 2.1 line',
+            text: 'Roughly the rate a population needs to hold steady. Below it, each ' +
+                  'generation comes out smaller than the one before.' }
         ]
       },
       {
-        heading: 'Everyone, at their own speed',
-        subtitle: 'Three roads down: upheaval and policy in China, a late swift fall in Iran, ' +
-                  'a steady decline in Bangladesh.',
+        heading: 'Same destination, different routes',
+        subtitle: 'China, Iran and Bangladesh all ended up near two, but they got there in ' +
+                  'very different ways.',
         featured: [
           { code: 'CHN', color: COL.CHN },
           { code: 'IRN', color: COL.IRN },
@@ -317,24 +313,26 @@
         world: 0.5, water: true, zoom: false,
         notes: [
           { code: 'CHN', year: 1963, dx: 86, dy: -28, align: 'left', wrap: 186,
-            title: "China's sawtooth",
-            text: 'Famine collapse, then a rebound peak near ' + v1('CHN', 1963) + ' in 1963.' },
+            title: "China's spike",
+            text: 'Births collapsed during the famine, then bounced back to ' +
+                  v1('CHN', 1963) + ' in 1963.' },
           { code: 'CHN', year: 1979, dx: -64, dy: 92, align: 'left', wrap: 190,
-            title: 'Before the one-child policy',
-            text: "China's steepest fall came in the 1970s — before the 1980 policy." },
+            title: 'Most of it came early',
+            text: 'China fell fastest in the 1970s, before the one-child policy began in 1980.' },
           { code: 'IRN', year: 1988, dx: 66, dy: -74, align: 'left', wrap: 194,
-            title: "Iran's cliff",
-            text: 'From ' + v1('IRN', 1985) + ' to ' + v1('IRN', 2000) +
-                  ' in roughly two decades — among the fastest declines recorded.' },
+            title: 'Iran, in 15 years',
+            text: 'Down from ' + v1('IRN', 1985) + ' in 1985 to ' + v1('IRN', 2000) +
+                  ' by 2000. Few countries have dropped that fast.' },
           { code: 'BGD', year: 2000, dx: 52, dy: 96, align: 'left', wrap: 190,
-            title: 'Bangladesh',
-            text: 'From ' + v1('BGD', 1971) + ' in 1971 to about two today.' }
+            title: 'Bangladesh, gradually',
+            text: v1('BGD', 1971) + ' in 1971, ' + v1('BGD', 2024) +
+                  ' today. No sharp turns, just a steady slide.' }
         ]
       },
       {
         heading: 'Through the floor',
-        subtitle: 'South Korea fell through every supposed floor. Note: the vertical axis ' +
-                  'zooms in for this scene; the 2.1 waterline stays fixed for reference.',
+        subtitle: 'South Korea kept going past every level people assumed was the bottom. ' +
+                  'The vertical axis is zoomed in here; the 2.1 line stays put.',
         featured: [
           { code: 'JPN', color: COL.JPN },
           { code: 'ITA', color: COL.ITA },
@@ -344,20 +342,20 @@
         world: 0.5, water: true, zoom: true,
         notes: [
           { code: 'KOR', year: 1983, dx: -160, dy: 108, align: 'left', wrap: 188,
-            title: 'Below replacement',
-            text: 'Korea crosses 2.1 in the early 1980s and never returns.' },
+            title: 'Below replacement in 1983',
+            text: 'Korea dropped under 2.1 that year and has never been back above it.' },
           { code: 'KOR', year: 2018, dx: -164, dy: -70, align: 'right', wrap: 182,
-            title: 'Below 1.0',
-            text: 'The first country ever measured under one birth per woman.' },
+            title: 'Under one birth',
+            text: 'Only Hong Kong and Macao, both city territories, had got there first.' },
           { code: 'KOR', year: 2024, dx: -128, dy: 58, align: 'right', wrap: 188,
             title: v2('KOR', 2023) + ' → ' + v2('KOR', 2024),
-            text: "The 2023 record low, then 2024's first uptick in nine years." }
+            text: '2023 was Korea’s record low. 2024 ticked up for the first time in nine years.' }
         ]
       },
       {
-        heading: 'Falling last',
-        subtitle: "Sub-Saharan Africa's decline began later and from higher — most of this " +
-                  "century's population growth is projected to happen here.",
+        heading: 'The last to turn',
+        subtitle: 'Sub-Saharan Africa started falling later, and from higher up. Most of the ' +
+                  'population growth left this century is expected to come from here.',
         featured: [
           { code: 'SSF', color: COL.SSF },
           { code: 'NER', color: COL.NER }
@@ -366,17 +364,18 @@
         notes: [
           { code: 'NER', year: 2024, dx: -206, dy: -52, align: 'right', wrap: 190,
             title: 'Niger: ' + v1('NER', 2024),
-            text: "Long the world's highest national fertility rate." },
+            text: 'Highest in the world every year from 1995 to 2018. Four countries are ' +
+                  'now just above it.' },
           { code: 'SSF', year: 2024, dx: -196, dy: 40, align: 'right', wrap: 196,
             title: 'Sub-Saharan Africa: ' + v1('SSF', 2024),
-            text: 'Declining — but later, and from higher, than everywhere else.' }
+            text: 'Falling too, just later and from a much higher starting point.' }
         ]
       },
       {
-        heading: 'Now explore the trajectories yourself',
-        subtitle: 'Five scenes, one arc: a world near five became a world near two — Korea far ' +
-                  'below, Sub-Saharan Africa still above four. The banner’s questions are ' +
-                  'good places to start.',
+        heading: 'Look up a country',
+        subtitle: 'A world that averaged nearly five children per woman now averages just ' +
+                  'over two. Korea sits far below that, Sub-Saharan Africa well above it. ' +
+                  'Search for any country to follow its own path.',
         featured: [ { code: 'SSF', color: COL.SSF } ],
         world: 1, water: true, zoom: false, explore: true,
         notes: []
@@ -404,15 +403,6 @@
       el.datalist.appendChild(opt);
     });
 
-    regions.forEach(function (r) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'region-btn';
-      b.dataset.region = r;
-      b.innerHTML = '<span class="swatch"></span>' + r;
-      b.addEventListener('click', function () { toggleRegion(r); });
-      el.regions.appendChild(b);
-    });
   }
 
   /* ------------------------------------------------------- scene painting */
@@ -430,9 +420,6 @@
 
   // Scene 6 only: exploration modifiers layered on top of the base style.
   function exploreStyle(s, st) {
-    if (!s.isAggregate && s.code !== 'WLD' && hiddenRegions[s.region]) {
-      return { stroke: st.stroke, width: st.width, opacity: 0.03 };
-    }
     if (pinned === s.code) return { stroke: COL.KOR, width: 2.6, opacity: 1 };
     if (hovered === s.code) {
       // emphasise, never de-emphasise: a line that already carries its own
@@ -594,7 +581,7 @@
       var s = byCode[f.code];
       if (s) out.push({ code: s.code, name: s.name, color: f.color, series: s });
     });
-    if (scene.explore && pinned && !hiddenRegions[byCode[pinned].region]) {
+    if (scene.explore && pinned) {
       var already = out.some(function (o) { return o.code === pinned; });
       if (!already) out.push({ code: pinned, name: byCode[pinned].name, color: COL.KOR, series: byCode[pinned] });
       else out.forEach(function (o) { if (o.code === pinned) o.color = COL.KOR; });
@@ -817,7 +804,6 @@
     el.explore.setAttribute('aria-hidden', on ? 'false' : 'true');
     el.search.disabled = !on;
     el.reset.disabled = !on;
-    Array.prototype.forEach.call(el.regions.children, function (b) { b.disabled = !on; });
 
     if (armTimer) { clearTimeout(armTimer); armTimer = null; }
     disarmChart();
@@ -834,12 +820,6 @@
     }
   }
 
-  function visibleForHover(s) {
-    if (s.isAggregate) return true;
-    if (s.code === 'WLD') return true;
-    return !hiddenRegions[s.region];
-  }
-
   function nearest(mx, my) {
     var yr = Math.round(x.invert(mx));
     if (yr < YEAR0) yr = YEAR0;
@@ -847,7 +827,6 @@
     var best = null, bestD = Infinity;
     for (var i = 0; i < series.length; i++) {
       var s = series[i];
-      if (!visibleForHover(s)) continue;
       var v = s.byYear.get(yr);
       if (v === undefined) continue;
       var d = Math.abs(pixOf(v) - my);
@@ -893,11 +872,6 @@
 
   // Hiding a region hides a pinned country inside it too — the pin is kept, so
   // switching the region back on brings it straight back.
-  function toggleRegion(r) {
-    if (hiddenRegions[r]) delete hiddenRegions[r]; else hiddenRegions[r] = true;
-    repaintExplore();
-  }
-
   function commitSearch() {
     var v = el.search.value.trim().toLowerCase();
     if (!v) return;
@@ -912,25 +886,13 @@
     }
     if (!found) return;
     pinned = found.code;
-    if (!found.isAggregate && hiddenRegions[found.region]) delete hiddenRegions[found.region];
     repaintExplore();
-  }
-
-  function syncRegionButtons() {
-    Array.prototype.forEach.call(el.regions.children, function (b) {
-      b.classList.toggle('off', !!hiddenRegions[b.dataset.region]);
-    });
   }
 
   function clearExplore() {
     pinned = null;
     hovered = null;
-    hiddenRegions = {};
     if (el.search) el.search.value = '';
-    // the buttons must be resynced here, not only in repaintExplore: leaving
-    // scene 6 clears the regions without any repaint, and a stale "off" chip
-    // would then claim a region is hidden when it is not
-    syncRegionButtons();
     hideTooltip();
   }
 
@@ -946,7 +908,6 @@
         .attr('stroke', st.stroke).attr('stroke-width', st.width).attr('opacity', st.opacity);
     });
 
-    syncRegionButtons();
     updateLabels(scene, zoomK, 0);
   }
 
